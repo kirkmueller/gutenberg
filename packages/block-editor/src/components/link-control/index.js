@@ -161,10 +161,6 @@ function LinkControl( {
 							key={ `${ suggestion.id }-${ suggestion.type }` }
 							itemProps={ buildSuggestionItemProps( suggestion, index ) }
 							suggestion={ suggestion }
-							onClick={ () => {
-								setIsEditingLink( false );
-								onChange( { ...value, ...suggestion } );
-							} }
 							isSelected={ index === selectedSuggestion }
 							isURL={ manualLinkEntryTypes.includes( suggestion.type.toLowerCase() ) }
 							searchTerm={ inputValue }
