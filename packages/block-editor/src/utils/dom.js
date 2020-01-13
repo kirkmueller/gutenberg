@@ -8,12 +8,12 @@
  *
  * @return {Element} Block DOM node.
  */
-export function getBlockDOMNode( clientId, scope = document ) {
-	return scope.querySelector( '[data-block="' + clientId + '"]' );
+export function getBlockDOMNode( clientId ) {
+	return document.getElementById( 'block-' + clientId );
 }
 
-export function getBlockPreviewContainerDOMNode( clientId, scope ) {
-	const domNode = getBlockDOMNode( clientId, scope );
+export function getBlockPreviewContainerDOMNode( clientId ) {
+	const domNode = getBlockDOMNode( clientId );
 
 	if ( ! domNode ) {
 		return;
@@ -33,7 +33,7 @@ export function getBlockPreviewContainerDOMNode( clientId, scope ) {
  * @return {Element} Block DOM node.
  */
 export function getBlockFocusableWrapper( clientId ) {
-	return getBlockDOMNode( clientId ).closest( '.block-editor-block-list__block' );
+	return getBlockDOMNode( clientId );
 }
 
 /**
@@ -57,7 +57,7 @@ export function isBlockFocusStop( element ) {
  * @return {boolean} Whether elements are in the same block.
  */
 export function isInSameBlock( a, b ) {
-	return a.closest( '[data-block]' ) === b.closest( '[data-block]' );
+	return a.closest( '.block-editor-block-list__block' ) === b.closest( '.block-editor-block-list__block' );
 }
 
 /**

@@ -130,9 +130,6 @@ function BlockListBlock( {
 	// Reference of the wrapper
 	const wrapper = useRef( null );
 
-	// Reference to the block edit node
-	const blockNodeRef = useRef();
-
 	// Handling the error state
 	const [ hasError, setErrorState ] = useState( false );
 	const onBlockError = () => setErrorState( true );
@@ -160,10 +157,10 @@ function BlockListBlock( {
 
 		// Find all tabbables within node.
 		const textInputs = focus.tabbable
-			.find( blockNodeRef.current )
+			.find( wrapper.current )
 			.filter( isTextField )
 			// Exclude inner blocks
-			.filter( ( node ) => ! ignoreInnerBlocks || isInsideRootBlock( blockNodeRef.current, node ) );
+			.filter( ( node ) => ! ignoreInnerBlocks || isInsideRootBlock( wrapper.current, node ) );
 
 		// If reversed (e.g. merge via backspace), use the last in the set of
 		// tabbables.
@@ -377,6 +374,8 @@ function BlockListBlock( {
 			data-type={ name }
 			// Only allow shortcuts when a blocks is selected and not locked.
 			onKeyDown={ isSelected && ! isLocked ? onKeyDown : undefined }
+			// Only allow selection to be started from a selected block.
+			onMouseLeave={ isSelected ? onMouseLeave : undefined }
 			tabIndex="0"
 			aria-label={ blockAriaLabel }
 			role="group"
@@ -410,7 +409,7 @@ function BlockListBlock( {
 					animate={ false }
 					position={ popoverPosition }
 					focusOnMount={ false }
-					anchorRef={ blockNodeRef.current }
+					anchorRef={ wrapper.current }
 					className="block-editor-block-list__block-popover"
 					__unstableSticky={ showEmptyBlockSideInserter ? false : popoverIsSticky }
 					__unstableSlotName="block-toolbar"
@@ -444,29 +443,22 @@ function BlockListBlock( {
 					) }
 				</Popover>
 			) }
-			<div
-				ref={ blockNodeRef }
-				// Only allow selection to be started from a selected block.
-				onMouseLeave={ isSelected ? onMouseLeave : undefined }
-				data-block={ clientId }
-			>
-				<BlockCrashBoundary onError={ onBlockError }>
-					{ isValid && blockEdit }
-					{ isValid && mode === 'html' && (
-						<BlockHtml clientId={ clientId } />
-					) }
-					{ ! isValid && [
-						<BlockInvalidWarning
-							key="invalid-warning"
-							clientId={ clientId }
-						/>,
-						<div key="invalid-preview">
-							{ getSaveElement( blockType, attributes ) }
-						</div>,
-					] }
-				</BlockCrashBoundary>
-				{ !! hasError && <BlockCrashWarning /> }
-			</div>
+			<BlockCrashBoundary onError={ onBlockError }>
+				{ isValid && blockEdit }
+				{ isValid && mode === 'html' && (
+					<BlockHtml clientId={ clientId } />
+				) }
+				{ ! isValid && [
+					<BlockInvalidWarning
+						key="invalid-warning"
+						clientId={ clientId }
+					/>,
+					<div key="invalid-preview">
+						{ getSaveElement( blockType, attributes ) }
+					</div>,
+				] }
+			</BlockCrashBoundary>
+			{ !! hasError && <BlockCrashWarning /> }
 		</animated.div>
 	);
 }
